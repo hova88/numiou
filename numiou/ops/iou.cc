@@ -1,5 +1,6 @@
 /*
  ref: OpenPCdet
+ url:https://github.com/open-mmlab/OpenPCDet/blob/master/pcdet/ops/iou3d_nms/src/iou3d_cpu.cpp
 */
 
 #include <stdio.h>
@@ -8,11 +9,6 @@
 #include <vector>
 
 #include "iou.h"
-
-// #define CHECK_A
-// #define CHECK_CONTIGUOUS(x) do { \
-
-// }
 
 
 inline double min(double a, double b) {
@@ -189,7 +185,7 @@ inline double box_overlap(const double *box_a, const double *box_b) {
     poly_center.x /= cnt;
     poly_center.y /= cnt;
 
-    // sort the points of polygon
+    // sort the points of polygon, antoclockwise
     Point temp;
     for (int j = 0; j < cnt - 1; j++){
         for (int i = 0; i < cnt - j - 1; i++){
@@ -215,7 +211,6 @@ inline double iou_bev_kernel(const double *box_a, const double *box_b) {
     double sa = box_a[3] * box_a[4];
     double sb = box_b[3] * box_b[4];
     double s_overlap = box_overlap(box_a, box_b);
-    printf("s_overlap: %f, sa: %f, sb: %f \n",s_overlap, sa, sb);
     return s_overlap / fmaxf(sa + sb - s_overlap, EPS);
 }
 
@@ -239,20 +234,12 @@ py::array_t<double> iou_bev(py::array_t<double> boxes_a_numpy, py::array_t<doubl
     const double* boxes_b_ptr = static_cast<double*>(buf_b.ptr);
     double* iou_ptr = static_cast<double*>(buf_iou.ptr);
 
-    // double boxes_a_ptr = []
-    printf(" %f, %f, %f, %f, %f, %f, %f\n", boxes_a_ptr[0],\
-        boxes_a_ptr[1],boxes_a_ptr[2],boxes_a_ptr[3],boxes_a_ptr[4],boxes_a_ptr[5],boxes_a_ptr[6]);
-
-    printf(" %f, %f, %f, %f, %f, %f, %f\n", boxes_b_ptr[0+7],\
-        boxes_b_ptr[1+7],boxes_b_ptr[2+7],boxes_b_ptr[3+7],boxes_b_ptr[4+7],boxes_b_ptr[5+7],boxes_b_ptr[6+7]);
-
 
     for (int i = 0; i < num_boxes_a; i++) {
         for (int j = 0; j < num_boxes_b; j++) {
             iou_ptr[i * num_boxes_b + j] = iou_bev_kernel(boxes_a_ptr + i * 7, boxes_b_ptr + j * 7);
         }
     }
-    printf(" %f, %f, %f\n", iou_ptr[0],iou_ptr[1],iou_ptr[2]);
 
     return iou.reshape({num_boxes_a,num_boxes_b});
 }
