@@ -123,11 +123,9 @@ inline double box_overlap(const double *box_a, const double *box_b) {
     */
 
     double a_angle = box_a[6], b_angle = box_b[6];
-    double a_dx_half = box_a[3]/2, b_dx_half = box_b[3]/2, a_dy_half = box_b[4]/2, b_dy_half = box_b[4]/2;
-
+    double a_dx_half = box_a[3] / 2, b_dx_half = box_b[3] / 2, a_dy_half = box_a[4] / 2, b_dy_half = box_b[4] / 2;
     double a_x1 = box_a[0] - a_dx_half, a_y1 = box_a[1] - a_dy_half;
     double a_x2 = box_a[0] + a_dx_half, a_y2 = box_a[1] + a_dy_half;
-
     double b_x1 = box_b[0] - b_dx_half, b_y1 = box_b[1] - b_dy_half;
     double b_x2 = box_b[0] + b_dx_half, b_y2 = box_b[1] + b_dy_half;
 
@@ -150,7 +148,7 @@ inline double box_overlap(const double *box_a, const double *box_b) {
     double a_angle_cos = cos(a_angle), a_angle_sin = sin(a_angle);
     double b_angle_cos = cos(b_angle), b_angle_sin = sin(b_angle);
 
-    for (int k =0; k < 4; k++) {
+    for (int k = 0; k < 4; k++){
         rotate_around_center(center_a, a_angle_cos, a_angle_sin, box_a_corners[k]);
         rotate_around_center(center_b, b_angle_cos, b_angle_sin, box_b_corners[k]);
     }
@@ -158,16 +156,16 @@ inline double box_overlap(const double *box_a, const double *box_b) {
     box_a_corners[4] = box_a_corners[0];
     box_b_corners[4] = box_b_corners[0];
 
-    // get intersection of two lines
+    // get intersection of lines
     Point cross_points[16];
     Point poly_center;
     int cnt = 0, flag = 0;
 
-    poly_center.set(0,0);
-    for (int i = 0; i < 4; i++) {
-        for (int j =0; j < 4; j++) {
-            flag = intersection(box_a_corners[i+1], box_a_corners[i], box_b_corners[j+1], box_b_corners[j], cross_points[cnt]);
-            if (flag) {
+    poly_center.set(0, 0);
+    for (int i = 0; i < 4; i++){
+        for (int j = 0; j < 4; j++){
+            flag = intersection(box_a_corners[i + 1], box_a_corners[i], box_b_corners[j + 1], box_b_corners[j], cross_points[cnt]);
+            if (flag){
                 poly_center = poly_center + cross_points[cnt];
                 cnt++;
             }
@@ -175,13 +173,13 @@ inline double box_overlap(const double *box_a, const double *box_b) {
     }
 
     // check corners
-    for (int k = 0; k < 4; k++) {
-        if (check_in_box2d(box_a, box_b_corners[k])) {
+    for (int k = 0; k < 4; k++){
+        if (check_in_box2d(box_a, box_b_corners[k])){
             poly_center = poly_center + box_b_corners[k];
             cross_points[cnt] = box_b_corners[k];
             cnt++;
         }
-        if (check_in_box2d(box_b, box_a_corners[k])) {
+        if (check_in_box2d(box_b, box_a_corners[k])){
             poly_center = poly_center + box_a_corners[k];
             cross_points[cnt] = box_a_corners[k];
             cnt++;
@@ -191,26 +189,25 @@ inline double box_overlap(const double *box_a, const double *box_b) {
     poly_center.x /= cnt;
     poly_center.y /= cnt;
 
-    // sort the points of polygon , anticlockwise
+    // sort the points of polygon
     Point temp;
-    for (int j = 0; j < cnt - 1; j++) {
-        for (int i = 0; i < cnt -j; i++) {
-            if (point_cmp(cross_points[i], cross_points[i+1], poly_center)) {
+    for (int j = 0; j < cnt - 1; j++){
+        for (int i = 0; i < cnt - j - 1; i++){
+            if (point_cmp(cross_points[i], cross_points[i + 1], poly_center)){
                 temp = cross_points[i];
-                cross_points[i] = cross_points[i+1];
-                cross_points[i+1] = temp;
+                cross_points[i] = cross_points[i + 1];
+                cross_points[i + 1] = temp;
             }
         }
     }
 
     // get the overlap areas
     double area = 0;
-    for (int k = 0; k < cnt -1; k++) {
-        area += cross(cross_points[k] - cross_points[0], cross_points[k +1] - cross_points[0]);
+    for (int k = 0; k < cnt - 1; k++){
+        area += cross(cross_points[k] - cross_points[0], cross_points[k + 1] - cross_points[0]);
     }
 
     return fabs(area) / 2.0;
-
 }
 
 inline double iou_bev_kernel(const double *box_a, const double *box_b) {

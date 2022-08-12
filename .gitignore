@@ -2,4 +2,4 @@ build
 *.egg-info
 *.so
 .vscode
-example
+example/
