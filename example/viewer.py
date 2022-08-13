@@ -211,8 +211,11 @@ if __name__ == "__main__":
 
     iou = niou.bev(boxes_a,boxes_b)
     np.set_printoptions(formatter={'float': lambda x: "{0:0.3f}".format(x)})
+    print("-----------------------------------------")
+    print("shape of inputs: boxes_a = {} , boxes_b = {}".format(boxes_a.shape, boxes_b.shape))    
+    print("shape of output: iou = {}".format(iou.shape))
+    print('-----------------------------------------')
     print(iou)
-    print(iou.shape)
 
     V = PointCloudVis()
     V.DRAW_BOXES(boxes_a , boxes_b) 
