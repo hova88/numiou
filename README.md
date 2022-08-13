@@ -2,7 +2,7 @@
 A **light-weight** and **plug-and-play** intersection over union (IoU) library for object detection. just dependent on numpy. 
 
 # Why do this
-When i want to calculate some rotated bounding boxes's IoU in my small project, there are two problems in front of me.
+When i want to use some library to calculate rotated bounding boxes's IoU in my small project, there are two problems in front of me.
 1. **fast but not easy-to-adapted**: i know some cool and fast iou implementation, but they are in some relatively large projects and have many dependencies.
 2. **easy-to-use but too slow**: pure numpy implementation is hard to get a fast IoU calculattion.
 
