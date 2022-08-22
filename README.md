@@ -1,4 +1,5 @@
 # Numiou: Num(py) IoU
+![iou](./docs/iou.png)
 A **light-weight** and **plug-and-play** intersection over union (IoU) library for object detection. just dependent on numpy. 
 
 # Why do this
@@ -13,5 +14,18 @@ So i made this one. just took a piece of code from OpenPCdet separately and adap
 
 # Installtion
 ```zsh
+cd && git clone git@github.com:hova88/numiou.git
+python3 -m pip install -r requirements.txt
+python3 -m pip install -e . -vvv
+```
+
+# Usage
+```python
+import numpy as np 
+import numiou as niou
+boxes_a = np.ones((10,7))
+boxes_b = np.ones((6,7))
+iou = niou.bev(boxes_a,boxes_b)
+print(iou)
 
 ```
